@@ -16,11 +16,11 @@ app.use(express.static(path.join(__dirname, 'client', 'build')));
 async function readFile(filePath) {
   return await fs.readFile(filePath, 'utf-8');
 }
-async function writeFile(filePath) {
-  return await fs.writeFile(filePath, 'utf-8');
+async function writeFile(filePath, fileContent) { // I add a file content to be able to pass my arg, otherwise it always returned utf-8
+  return await fs.writeFile(filePath, fileContent, 'utf-8');
 }
 async function readDir(dirPath) {
-  return await fs.readDir(dirPath);
+  return await fs.readdir(dirPath);
 }
 
 // some more helper functions
@@ -41,19 +41,39 @@ function jsonError(res, message) {
 //  res.json({ wow: 'it works!' });
 //});
 
-
 // GET: '/api/page/:slug'
 // success response: {status: 'ok', body: '<file contents>'}
 // failure response: {status: 'error', message: 'Page does not exist.'}
 
 app.get('/api/page/:slug', async (req, res) => {
-  res.json({status: 'ok', body: 'fix me , write the body' }); //here goes await with path or join
-});
+
+  const files =await readDir('./data');
+  // console.log(files);
+  if(files.find(i => i === `${req.params.slug}.md`)){
+    const content = await readFile(`./data/${req.params.slug}.md`)
+    res.json({ status: 'ok', body: content });
+  }else{
+    jsonError(res, 'Page does not exist.');
+    // res.json({status: 'error', message: 'Page does not exist.'});
+  }
+  });
 
 // POST: '/api/page/:slug'
 // body: {body: '<file text content>'}
 // success response: {status: 'ok'}
 // failure response: {status: 'error', message: 'Could not write page.'}
+
+app.post('/api/page/:slug', async (req, res) => {
+  //console.log(req.body);
+  const newContent = req.body.body;
+  try {
+    await writeFile(`./data/${req.params.slug}.md`, newContent);
+    
+    res.json({ status: 'ok'});
+  } catch (error) {
+    res.json({status: 'error', message: 'Could not write page.'});
+  }
+  });
 
 // GET: '/api/pages/all'
 // success response: {status:'ok', pages: ['fileName', 'otherFileName']}
