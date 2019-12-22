@@ -1,5 +1,1 @@
-# About
-
-This is a wiki.
-
-#about #default
+this is edited about page
