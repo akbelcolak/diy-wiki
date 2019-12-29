@@ -63,17 +63,17 @@ app.get('/api/page/:slug', async (req, res) => {
 // success response: {status: 'ok'}
 // failure response: {status: 'error', message: 'Could not write page.'}
 
-app.post('/api/page/:slug', async (req, res) => {
-  //console.log(req.body);
-  const newContent = req.body.body;
-  try {
-    await writeFile(`./data/${req.params.slug}.md`, newContent);
+// app.post('/api/page/:slug', async (req, res) => {
+//   //console.log(req.body);
+//   const newContent = req.body.body;
+//   try {
+//     await writeFile(`./data/${req.params.slug}.md`, newContent);
     
-    res.json({ status: 'ok'});
-  } catch (error) {
-    res.json({status: 'error', message: 'Could not write page.'});
-  }
-  });
+//     res.json({ status: 'ok'});
+//   } catch (error) {
+//     res.json({status: 'error', message: 'Could not write page.'});
+//   }
+//   });
 
 // GET: '/api/pages/all'
 // success response: {status:'ok', pages: ['fileName', 'otherFileName']}
